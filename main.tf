@@ -35,14 +35,14 @@ resource "aws_subnet" "public_subnet" {
   count = 2
 }
 
-# # Private subnets in my-main-vpc
-# resource "aws_subnet" "private_subnet" {
-#   vpc_id     = aws_vpc.my-main-vpc.id
-#   cidr_block = var.private_subnet_cidr[count.index]
+# Private subnets in my-main-vpc
+resource "aws_subnet" "private_subnet" {
+  vpc_id     = aws_vpc.my-main-vpc.id
+  cidr_block = var.private_subnet_cidr[count.index]
 
-#   tags = {
-#     Name = "private_subnet_${count.index}"
-#   }
+  tags = {
+    Name = "private_subnet_${count.index}"
+  }
 
-#   count = 2
-# }
+  count = 2
+}
