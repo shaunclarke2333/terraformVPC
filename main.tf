@@ -14,7 +14,7 @@ provider "aws" {
     region = "us-east-1"
 }
 
-# # my_vpc aws vpc resource 
+# my_vpc aws vpc resource 
 resource "aws_vpc" "my-main-vpc" {
   cidr_block = "10.0.0.0/16"
 
@@ -23,17 +23,17 @@ resource "aws_vpc" "my-main-vpc" {
   }
 }
 
-# # Public subnets in my-main-vpc
-# resource "aws_subnet" "public_subnet" {
-#   vpc_id     = aws_vpc.my-main-vpc.id
-#   cidr_block = var.public_subnet_cidr[count.index]
+# Public subnets in my-main-vpc
+resource "aws_subnet" "public_subnet" {
+  vpc_id     = aws_vpc.my-main-vpc.id
+  cidr_block = var.public_subnet_cidr[count.index]
 
-#   tags = {
-#     Name = "public_subnet_${count.index}"
-#   }
+  tags = {
+    Name = "public_subnet_${count.index}"
+  }
 
-#   count = 2
-# }
+  count = 2
+}
 
 # # Private subnets in my-main-vpc
 # resource "aws_subnet" "private_subnet" {
