@@ -1,4 +1,4 @@
-Automating AWS VPC temaplte build with Terraform.
+Automating AWS VPC temaplate build with Terraform.
 
 This template contains the following resources:
 - VPC
