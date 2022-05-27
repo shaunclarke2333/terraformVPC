@@ -15,13 +15,13 @@ provider "aws" {
 }
 
 # # my_vpc aws vpc resource 
-# resource "aws_vpc" "my-main-vpc" {
-#   cidr_block = "10.0.0.0/16"
+resource "aws_vpc" "my-main-vpc" {
+  cidr_block = "10.0.0.0/16"
 
-#   tags = {
-#     "Name" = "my-main-vpc"
-#   }
-# }
+  tags = {
+    "Name" = "my-main-vpc"
+  }
+}
 
 # # Public subnets in my-main-vpc
 # resource "aws_subnet" "public_subnet" {
