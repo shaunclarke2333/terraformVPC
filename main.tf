@@ -56,22 +56,22 @@ resource "aws_internet_gateway" "my_internet_gateway" {
   }
 }
 
-# # Elastic IP for NAT gateway
-# resource "aws_eip" "nat" {
-#   vpc      = true
+# Elastic IP for NAT gateway
+resource "aws_eip" "nat" {
+  vpc = true
 
-#   count = 2
-# }
+  count = 2
+}
 
-# # NAT gateway to allow private subnet to communicate with the internet
-# resource "aws_nat_gateway" "nat_gateway" {
-#   allocation_id = aws_eip.nat[count.index].id
-#   subnet_id     = aws_subnet.public_subnet_[count.index].id
+# NAT gateway to allow private subnet to communicate with the internet
+resource "aws_nat_gateway" "nat_gateway" {
+  allocation_id = aws_eip.nat[count.index].id
+  subnet_id     = aws_subnet.public_subnet[count.index].id
 
-#   tags = {
-#     Name = "NATGateWay"
-#   }
+  tags = {
+    Name = "NATGateWay"
+  }
 
-#   count = 2
-# }
+  count = 2
+}
 
