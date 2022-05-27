@@ -75,7 +75,7 @@ resource "aws_nat_gateway" "nat_gateway" {
   count = 2
 }
 
-# Public route table to route to the internet
+# Public route table to route to the internet gateway
 resource "aws_route_table" "public_route_table" {
   vpc_id = aws_vpc.my-main-vpc.id
 
@@ -87,4 +87,18 @@ resource "aws_route_table" "public_route_table" {
   tags = {
     Name = "public_route_table"
   }
+}
+# Private route table to route to the NAT gateway
+resource "aws_route_table" "private_route_table" {
+  vpc_id = aws_vpc.my-main-vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat_gateway[count.index].id
+  }
+
+  tags = {
+    Name = "private_route_table_${count.index}"
+  }
+  count = 2
 }
