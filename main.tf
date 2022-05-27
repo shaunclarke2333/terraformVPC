@@ -46,3 +46,32 @@ resource "aws_subnet" "private_subnet" {
 
   count = 2
 }
+
+# Internet gateway to allow public subents to access the internet
+resource "aws_internet_gateway" "my_internet_gateway" {
+  vpc_id = aws_vpc.my-main-vpc.id
+
+  tags = {
+    Name = "my_internet_gateway"
+  }
+}
+
+# # Elastic IP for NAT gateway
+# resource "aws_eip" "nat" {
+#   vpc      = true
+
+#   count = 2
+# }
+
+# # NAT gateway to allow private subnet to communicate with the internet
+# resource "aws_nat_gateway" "nat_gateway" {
+#   allocation_id = aws_eip.nat[count.index].id
+#   subnet_id     = aws_subnet.public_subnet_[count.index].id
+
+#   tags = {
+#     Name = "NATGateWay"
+#   }
+
+#   count = 2
+# }
+
