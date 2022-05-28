@@ -89,10 +89,32 @@ resource "aws_route_table" "public_route_table" {
   }
 }
 
-# Associating route table with public subnets
+# Associating public route table with public subnets
 resource "aws_route_table_association" "main" {
   subnet_id      = aws_subnet.public_subnet[count.index].id
   route_table_id = aws_route_table.public_route_table.id
   count = 2
 }
 
+# Private route table to route to the NAT gateway
+resource "aws_route_table" "private_route_table" {
+  vpc_id = aws_vpc.my-main-vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat_gateway[count.index].id
+  }
+
+  tags = {
+    Name = "private_route_table_${count.index}"
+  }
+  count = 2
+}
+
+
+# Associating private route table with private subnets
+resource "aws_route_table_association" "pvt-main" {
+  subnet_id      = aws_subnet.private_subnet[count.index].id
+  route_table_id = aws_route_table.private_route_table[count.index].id
+  count = 2
+}
