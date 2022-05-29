@@ -19,7 +19,7 @@ resource "aws_vpc" "my-main-vpc" {
   cidr_block = "10.0.0.0/16"
 
   tags = {
-    "Name" = "my-main-vpc"
+    "Name" = "main-vpc"
   }
 }
 
@@ -31,7 +31,7 @@ resource "aws_subnet" "public_subnet" {
   cidr_block = var.public_subnet_cidr[count.index]
 
   tags = {
-    Name = "public_subnet_${count.index}"
+    Name = "main-public${count.index}"
   }
 }
 
@@ -43,7 +43,7 @@ resource "aws_subnet" "private_subnet" {
   cidr_block = var.private_subnet_cidr[count.index]
 
   tags = {
-    Name = "private_subnet_${count.index}"
+    Name = "main-private${count.index}"
   }
 }
 
@@ -52,7 +52,7 @@ resource "aws_internet_gateway" "my_internet_gateway" {
   vpc_id = aws_vpc.my-main-vpc.id
 
   tags = {
-    Name = "my_internet_gateway"
+    Name = "main-internet-gateway"
   }
 }
 
@@ -61,6 +61,10 @@ resource "aws_eip" "nat" {
   count = 2
 
   vpc = true
+
+  tags = {
+    "Name" = "main-nat${count.index}"
+  }
 }
 
 # NAT gateway to allow private subnet to communicate with the internet
@@ -71,7 +75,7 @@ resource "aws_nat_gateway" "nat_gateway" {
   subnet_id     = aws_subnet.public_subnet[count.index].id
 
   tags = {
-    Name = "NATGateWay"
+    Name = "main-nat${count.index}"
   }
 }
 
@@ -85,7 +89,7 @@ resource "aws_route_table" "public_route_table" {
   }
 
   tags = {
-    Name = "public_route_table"
+    Name = "main-public"
   }
 }
 
@@ -109,7 +113,7 @@ resource "aws_route_table" "private_route_table" {
   }
 
   tags = {
-    Name = "private_route_table_${count.index}"
+    Name = "main-private${count.index}"
   }
 }
 
