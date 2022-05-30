@@ -25,7 +25,7 @@ resource "aws_vpc" "my-main-vpc" {
 
 # Public subnets in my-main-vpc
 resource "aws_subnet" "public_subnet" {
-  count = 2
+  count = length(var.public_subnet_cidr)
 
   vpc_id     = aws_vpc.my-main-vpc.id
   cidr_block = var.public_subnet_cidr[count.index]
@@ -37,7 +37,7 @@ resource "aws_subnet" "public_subnet" {
 
 # Private subnets in my-main-vpc
 resource "aws_subnet" "private_subnet" {
-  count = 2
+  count = length(var.private_subnet_cidr)
 
   vpc_id     = aws_vpc.my-main-vpc.id
   cidr_block = var.private_subnet_cidr[count.index]
@@ -58,7 +58,7 @@ resource "aws_internet_gateway" "my_internet_gateway" {
 
 # Elastic IP for NAT gateway
 resource "aws_eip" "nat" {
-  count = 2
+  count = length(var.public_subnet_cidr)
 
   vpc = true
 
@@ -69,7 +69,7 @@ resource "aws_eip" "nat" {
 
 # NAT gateway to allow private subnet to communicate with the internet
 resource "aws_nat_gateway" "nat_gateway" {
-  count = 2
+  count = length(var.public_subnet_cidr)
 
   allocation_id = aws_eip.nat[count.index].id
   subnet_id     = aws_subnet.public_subnet[count.index].id
@@ -95,7 +95,7 @@ resource "aws_route_table" "public_route_table" {
 
 # Associating public route table with public subnets
 resource "aws_route_table_association" "main" {
-  count = 2
+  count = length(var.public_subnet_cidr)
 
   subnet_id      = aws_subnet.public_subnet[count.index].id
   route_table_id = aws_route_table.public_route_table.id
@@ -103,7 +103,7 @@ resource "aws_route_table_association" "main" {
 
 # Private route table to route to the NAT gateway
 resource "aws_route_table" "private_route_table" {
-  count = 2
+  count = length(var.private_subnet_cidr)
 
   vpc_id = aws_vpc.my-main-vpc.id
 
@@ -120,7 +120,7 @@ resource "aws_route_table" "private_route_table" {
 
 # Associating private route table with private subnets
 resource "aws_route_table_association" "pvt-main" {
-  count = 2
+  count = length(var.private_subnet_cidr)
 
   subnet_id      = aws_subnet.private_subnet[count.index].id
   route_table_id = aws_route_table.private_route_table[count.index].id
