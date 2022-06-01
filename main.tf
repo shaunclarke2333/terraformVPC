@@ -23,9 +23,16 @@ resource "aws_vpc" "my-main-vpc" {
   }
 }
 
+#Declaring availability zone data source
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
 # Public subnets in my-main-vpc
 resource "aws_subnet" "public_subnet" {
   count = length(var.public_subnet_cidr)
+
+  availability_zone = data.aws_availability_zones.available.names[count.index]
 
   vpc_id     = aws_vpc.my-main-vpc.id
   cidr_block = var.public_subnet_cidr[count.index]
@@ -38,6 +45,8 @@ resource "aws_subnet" "public_subnet" {
 # Private subnets in my-main-vpc
 resource "aws_subnet" "private_subnet" {
   count = length(var.private_subnet_cidr)
+
+  availability_zone = data.aws_availability_zones.available.names[count.index]
 
   vpc_id     = aws_vpc.my-main-vpc.id
   cidr_block = var.private_subnet_cidr[count.index]
