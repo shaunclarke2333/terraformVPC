@@ -1,5 +1,6 @@
 # public subnet ip addresses CIDR blocks
 variable "public_subnet_cidr" {
+  description = "public subnet ip addresses CIDR blocks"
   default = [
     "10.0.0.0/24",
     "10.0.1.0/24"
@@ -7,8 +8,27 @@ variable "public_subnet_cidr" {
 }
 # private subnet ip addresses CIDR blocks
 variable "private_subnet_cidr" {
+  description = "private subnet ip addresses CIDR blocks"
   default = [
     "10.0.2.0/24",
     "10.0.3.0/24"
   ]
+}
+variable "ami" {
+  description = "Ubuntu ami ID available in east-us-1"
+  default = "ami-09d56f8956ab235b3"
+}
+variable "instance_type" {
+  description = "instance type for ec2"
+  default = "t2.small"
+}
+
+variable "name" {
+  description = "ec2 name"
+  default = "main-ubuntu"
+}
+variable "key_name" {
+  description = "key to connect to ec2"
+  default = "virginaR53keypair"
+  
 }
