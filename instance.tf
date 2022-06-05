@@ -12,6 +12,22 @@ resource "aws_security_group" "allow_ssh" {
     cidr_blocks = ["70.95.138.224/32"]
 
   }
+  ingress {
+    description = "http to VPC"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+
+  }
+  ingress {
+    description = "https to VPC"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+
+  }
 
   egress {
     from_port   = 0
@@ -49,6 +65,11 @@ resource "aws_instance" "main-ec2" {
   associate_public_ip_address = true
   security_groups             = ["${aws_security_group.allow_ssh.id}"]
   key_name                    = var.key_name
+  user_data                   = <<-EOF
+    #!/bin/bash
+    sudo apt update -y
+    sudo apt install apache2 -y
+  EOF
 
   tags = {
     Name = "main-ubuntu"
