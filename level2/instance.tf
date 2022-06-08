@@ -1,8 +1,19 @@
+#This remote data source is for main vpc and main-public0 id
+data "terraform_remote_state" "main-vpc" {
+  backend = "s3"
+
+  config = {
+    bucket = "main-backend-state-bucket"
+    key    = "level1/terraform.tfstate"
+    region = "us-east-1"
+  }
+}
+
 # Security group for this EC2 instance to allow ssh inbound on port 22
 resource "aws_security_group" "allow_ssh" {
   name        = "ec2-instance"
   description = "Allow SSH inbound traffic"
-  vpc_id      = aws_vpc.my-main-vpc.id
+  vpc_id      = data.terraform_remote_state.main-vpc.outputs.main-vpc-id
 
   ingress {
     description = "ssh to VPC"
@@ -48,14 +59,13 @@ data "aws_ami" "ubuntu" {
   owners = ["aws-marketplace"]
 }
 
-
 # EC2 instance resource block
 resource "aws_instance" "main-ec2" {
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = var.instance_type
-  subnet_id                   = aws_subnet.public_subnet[0].id
+  subnet_id                   = data.terraform_remote_state.main-vpc.outputs.main-public0-subnet
   associate_public_ip_address = true
-  security_groups             = ["${aws_security_group.allow_ssh.id}"]
+  vpc_security_group_ids             = ["${aws_security_group.allow_ssh.id}"]
   key_name                    = var.key_name
   user_data                   = <<-EOF
     #!/bin/bash
@@ -67,3 +77,4 @@ resource "aws_instance" "main-ec2" {
     Name = "main-ubuntu"
   }
 }
+
