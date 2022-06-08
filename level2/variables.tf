@@ -8,6 +8,6 @@ variable "instance_type" {
 variable "key_name" {
   description = "key to connect to main-ec2 resource"
   default     = "main"
-
 }
+
 
