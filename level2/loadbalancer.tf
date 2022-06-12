@@ -1,20 +1,21 @@
-#Application load balancer
-resource "aws_lb" "test" {
-  name               = "test-lb-tf"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.lb_sg.id]
-  subnets            = [for subnet in aws_subnet.public : subnet.id]
+# # Target group for main-elb
+# resource "aws_lb_target_group" "main-target-group" {
+#   name     = "main-instance-target-group"
+#   port     = 80
+#   protocol = "HTTP"
+#   vpc_id   = aws_vpc.main.id
+# }
 
-  enable_deletion_protection = true
+# #Application load balancer
+# resource "aws_lb" "main-elb" {
+#   name               = "load-balancer"
+#   internal           = false
+#   load_balancer_type = "application"
+#   security_groups    = [aws_security_group.main-elb-tcp80.id]
+#   subnets            = [for subnet in data.terraform_remote_state.main-vpc.outputs.main-private-subnet : subnet.id]
 
-  access_logs {
-    bucket  = aws_s3_bucket.lb_logs.bucket
-    prefix  = "test-lb"
-    enabled = true
-  }
+#   tags = {
+#     Name = "main-elb"
+#   }
+# }
 
-  tags = {
-    Environment = "production"
-  }
-}

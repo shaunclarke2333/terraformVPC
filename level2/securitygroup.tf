@@ -34,7 +34,7 @@ resource "aws_security_group" "allow_ssh" {
 }
 
 # Security group for the main-loab-balancer Allow port 80 TCP inbound to ELB
-resource "aws_security_group" "allow_tcp80" {
+resource "aws_security_group" "main-elb-tcp80" {
   name        = "load-balancer"
   description = "Allow port 80 TCP inbound to ELB"
   vpc_id      = data.terraform_remote_state.main-vpc.outputs.main-vpc-id
@@ -55,6 +55,6 @@ resource "aws_security_group" "allow_tcp80" {
   }
 
   tags = {
-    Name = "main-allows-tcp80"
+    Name = "main-elb-tcp80"
   }
 }
