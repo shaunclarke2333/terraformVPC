@@ -4,7 +4,7 @@ resource "aws_lb" "main-elb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.main-elb-tcp80.id]
-  subnets            = [for subnet in data.terraform_remote_state.main-vpc.outputs.main-private-subnet : subnet.id]
+  subnets            = [for subnet in data.terraform_remote_state.main-vpc.outputs.main-public-subnet : subnet.id]
 
   tags = {
     Name = "main-elb"

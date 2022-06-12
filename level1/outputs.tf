@@ -5,9 +5,16 @@ output "main-vpc-id" {
   sensitive   = true
 }
 
-# Output for main-public0 subnet id
-output "main-public0-subnet" {
-  description = "will be used by devices that depend on main-public0 subnet ID"
-  value       = aws_subnet.public_subnet[0].id
+# Output for all main public subnets id
+output "main-public-subnet" {
+  description = "will be used by devices that depend on public subnet ID"
+  value       = aws_subnet.public_subnet
+  sensitive   = false
+}
+
+# Output for main-private0 subnet id
+output "main-private-subnet" {
+  description = "will be used by devices that depend on private subnet ID"
+  value       = aws_subnet.private_subnet
   sensitive   = true
 }
