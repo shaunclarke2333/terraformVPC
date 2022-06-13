@@ -20,9 +20,12 @@ resource "aws_instance" "main-ec2" {
   instance_type               = var.instance_type
   subnet_id                   = data.terraform_remote_state.main-vpc.outputs.main-private-subnet[0].id
   associate_public_ip_address = false
-  vpc_security_group_ids      = ["${aws_security_group.allow_ssh.id}"]
-  key_name                    = var.key_name
-  user_data                   = <<-EOF
+  vpc_security_group_ids = [
+    "${aws_security_group.allow_ssh.id}",
+    "${aws_security_group.main-elb-tcp80.id}"
+  ]
+  key_name  = var.key_name
+  user_data = <<-EOF
     #!/bin/bash
     sudo apt update -y
     sudo apt install apache2 -y
