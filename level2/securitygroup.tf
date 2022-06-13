@@ -2,7 +2,7 @@
 resource "aws_security_group" "allow_ssh" {
   name        = "ec2-instance"
   description = "Allow SSH inbound traffic"
-  vpc_id      = data.terraform_remote_state.main-vpc.outputs.main-vpc-id
+  vpc_id      = data.terraform_remote_state.level1-main-vpc.outputs.main-vpc-id
 
   ingress {
     description = "ssh to VPC"
@@ -29,7 +29,7 @@ resource "aws_security_group" "allow_ssh" {
 resource "aws_security_group" "main-elb-tcp80" {
   name        = "load-balancer"
   description = "Allow port 80 TCP inbound to ELB"
-  vpc_id      = data.terraform_remote_state.main-vpc.outputs.main-vpc-id
+  vpc_id      = data.terraform_remote_state.level1-main-vpc.outputs.main-vpc-id
 
   ingress {
     description = "http to ELB"

@@ -18,7 +18,7 @@ data "aws_ami" "ubuntu" {
 resource "aws_instance" "main-ec2" {
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = var.instance_type
-  subnet_id                   = data.terraform_remote_state.main-vpc.outputs.main-private-subnet[0].id
+  subnet_id                   = data.terraform_remote_state.level1-main-vpc.outputs.main-private-subnet[0].id
   associate_public_ip_address = false
   vpc_security_group_ids = [
     "${aws_security_group.allow_ssh.id}",
