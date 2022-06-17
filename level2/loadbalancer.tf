@@ -48,4 +48,3 @@ resource "aws_lb_listener" "main-lb-listener" {
     target_group_arn = aws_lb_target_group.main-target-group.arn
   }
 }
-
