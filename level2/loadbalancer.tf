@@ -33,7 +33,7 @@ resource "aws_lb_target_group" "main-target-group" {
 # Resource to add ec2 instance to target group
 resource "aws_lb_target_group_attachment" "main-attach-target-group" {
   target_group_arn = aws_lb_target_group.main-target-group.arn
-  target_id        = aws_instance.main-ec2.id
+  target_id        = aws_lb.main-elb.arn
   port             = 80
 }
 
