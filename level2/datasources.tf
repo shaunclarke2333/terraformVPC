@@ -25,3 +25,9 @@ data "aws_ami" "ubuntu" {
   owners = ["aws-marketplace"]
 }
 
+#Data cource for AWS S3 full access policy
+data "aws_iam_policy" "s3-fullaccess-policy" {
+  name = "AmazonS3FullAccess"
+}
+
+

@@ -9,7 +9,7 @@ resource "aws_security_group" "allow_ssh" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["70.95.138.224/32"]
+    cidr_blocks = [for subnet in data.terraform_remote_state.level1-main-vpc.outputs.main-public-subnet : subnet.cidr_block]
 
   }
 
@@ -22,6 +22,33 @@ resource "aws_security_group" "allow_ssh" {
 
   tags = {
     Name = "main-allows-ssh"
+  }
+}
+
+# Security group to allow ssh inbound on port 22 to bastion
+resource "aws_security_group" "allow_ssh_bastion" {
+  name        = "Bastion"
+  description = "Allow SSH inbound traffic to bastion"
+  vpc_id      = data.terraform_remote_state.level1-main-vpc.outputs.main-vpc-id
+
+  ingress {
+    description = "ssh to bastion in VPC"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["70.95.138.224/32"]
+
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "main-allows-ssh-bastion"
   }
 }
 
