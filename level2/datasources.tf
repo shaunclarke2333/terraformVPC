@@ -29,5 +29,3 @@ data "aws_ami" "ubuntu" {
 data "aws_iam_policy" "s3-fullaccess-policy" {
   name = "AmazonS3FullAccess"
 }
-
-
