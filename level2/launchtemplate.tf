@@ -20,3 +20,4 @@ resource "aws_launch_template" "main-launch-temp" {
     }
   }
 }
+
