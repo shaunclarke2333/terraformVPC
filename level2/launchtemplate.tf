@@ -6,7 +6,7 @@ resource "aws_launch_template" "main-launch-temp" {
   key_name      = var.key_name
 
   iam_instance_profile {
-    name = "main-launch-temp-profile"
+    name = "main-launch-template-profile"
   }
 
   vpc_security_group_ids = [
