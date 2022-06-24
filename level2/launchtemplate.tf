@@ -3,15 +3,13 @@ resource "aws_launch_template" "main-launch-temp" {
   name_prefix   = "main-launch-temp"
   image_id      = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
-  key_name      = var.key_name
 
   iam_instance_profile {
-    name = "main-launch-template-profile"
+    name = "main-session-manager-profile"
   }
 
   vpc_security_group_ids = [
-    "${aws_security_group.main-elb-tcp80.id}",
-    "${aws_security_group.allow_ssh.id}"
+    "${aws_security_group.main-elb-tcp80.id}"
   ]
 
   tag_specifications {
