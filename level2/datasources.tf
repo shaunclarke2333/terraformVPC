@@ -9,7 +9,7 @@ data "terraform_remote_state" "level1-main-vpc" {
   }
 }
 
-# Data source for aws_ami 
+# Data source for ubuntu aws_ami 
 data "aws_ami" "ubuntu" {
   most_recent = true
   filter {
@@ -25,7 +25,12 @@ data "aws_ami" "ubuntu" {
   owners = ["aws-marketplace"]
 }
 
-#Data cource for AWS S3 full access policy
+#Data source for AWS S3 full access policy
 data "aws_iam_policy" "s3-fullaccess-policy" {
   name = "AmazonS3FullAccess"
+}
+
+#Data source policy for Amazon EC2 Role to enable AWS Systems Manager service core functionality
+data "aws_iam_policy" "session-mamanger-policy" {
+  name = "AmazonSSMManagedInstanceCore"
 }
