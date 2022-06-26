@@ -73,8 +73,8 @@ module "main_nat_gateway" {
   count = length(var.public_subnet_cidr)
 
   source        = "../mods/modules/nat_gateway"
-  allocation_id = "module.main_elastic_ip.eip_output${count.index}.id"
-  subnet_id     = "module.main_public_subnet.subnet${count.index}.id"
+  allocation_id = module.main_elastic_ip[count.index].eip_output.id
+  subnet_id     = module.main_public_subnet[count.index].subnet.id
 
   name = "${count.index}-main"
 }
@@ -95,8 +95,8 @@ module "main_public_route_table_association" {
   count = length(var.public_subnet_cidr)
 
   source         = "../mods/modules/route_table_association"
-  subnet_id      = "module.main_public_subnet.subnet${count.index}.id"
-  route_table_id = module.main_public_route_table.route-table.id
+  subnet_id      = module.main_public_subnet[count.index].subnet.id
+  route_table_id = module.main_public_route_table.route-table-id
 
 }
 
@@ -107,10 +107,10 @@ module "main_private_route_table" {
   source = "../mods/modules/nat_route_table"
   vpc_id = module.my-main-vpc.main-vpc-id
   cidr_block     = "0.0.0.0/0"
-  nat_gateway_id = "module.main_nat_gateway.nat_gateway_output${count.index}.id"
+  nat_gateway_id = module.main_nat_gateway[count.index].nat_gateway_output.id
 
 
-  name = "private"
+  name = "${count.index}-private"
 }
 
 # Associating private route table with private subnets
@@ -118,8 +118,8 @@ module "main_private_route_table_association" {
   count = length(var.private_subnet_cidr)
 
   source         = "../mods/modules/route_table_association"
-  subnet_id      = "module.main_private_subnet.subnet${count.index}.id"
-  route_table_id = "module.main_private_route_table.route-table${count.index}.id"
+  subnet_id      = module.main_private_subnet[count.index].subnet.id
+  route_table_id = module.main_private_route_table[count.index].route-table-id
 
 }
 
