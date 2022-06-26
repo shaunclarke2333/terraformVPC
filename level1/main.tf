@@ -15,12 +15,11 @@ provider "aws" {
 }
 
 # my_vpc aws vpc resource 
-resource "aws_vpc" "my-main-vpc" {
+module "my-main-vpc" {
+  source     = "../mods/modules/vpc"
   cidr_block = "10.0.0.0/16"
 
-  tags = {
-    "Name" = "main-vpc"
-  }
+  name = "main"
 }
 
 #Declaring availability zone data source
@@ -29,108 +28,102 @@ data "aws_availability_zones" "available" {
 }
 
 # Public subnets in my-main-vpc
-resource "aws_subnet" "public_subnet" {
+module "main_public_subnet" {
   count = length(var.public_subnet_cidr)
 
+  source            = "../mods/modules/subnet"
   availability_zone = data.aws_availability_zones.available.names[count.index]
+  vpc_id            = module.my-main-vpc.main-vpc-id
+  subnet_cidr         = var.public_subnet_cidr[count.index]
 
-  vpc_id     = aws_vpc.my-main-vpc.id
-  cidr_block = var.public_subnet_cidr[count.index]
-
-  tags = {
-    Name = "main-public${count.index}"
-  }
+  name = "${count.index}main-public"
 }
 
-# Private subnets in my-main-vpc
-resource "aws_subnet" "private_subnet" {
+# private subnets in my-main-vpc
+module "main_private_subnet" {
   count = length(var.private_subnet_cidr)
 
+  source            = "../mods/modules/subnet"
   availability_zone = data.aws_availability_zones.available.names[count.index]
-
-  vpc_id     = aws_vpc.my-main-vpc.id
-  cidr_block = var.private_subnet_cidr[count.index]
-
-  tags = {
-    Name = "main-private${count.index}"
-  }
+  vpc_id            = module.my-main-vpc.main-vpc-id
+  subnet_cidr         = var.private_subnet_cidr[count.index]
+  name = "${count.index}-main-private"
+ 
 }
 
 # Internet gateway to allow public subents to access the internet
-resource "aws_internet_gateway" "my_internet_gateway" {
-  vpc_id = aws_vpc.my-main-vpc.id
+module "my_internet_gateway" {
+  source = "../mods/modules/internet_gateway"
+  vpc_id = module.my-main-vpc.main-vpc-id
 
-  tags = {
-    Name = "main-internet-gateway"
-  }
+  name = "main"
 }
 
 # Elastic IP for NAT gateway
-resource "aws_eip" "nat" {
+module "main_elastic_ip" {
   count = length(var.public_subnet_cidr)
 
-  vpc = true
+  source = "../mods/modules/elastic_ip"
 
-  tags = {
-    "Name" = "main-nat${count.index}"
-  }
+  name = "${count.index}-main"
 }
 
 # NAT gateway to allow private subnet to communicate with the internet
-resource "aws_nat_gateway" "nat_gateway" {
+module "main_nat_gateway" {
   count = length(var.public_subnet_cidr)
 
-  allocation_id = aws_eip.nat[count.index].id
-  subnet_id     = aws_subnet.public_subnet[count.index].id
+  source        = "../mods/modules/nat_gateway"
+  allocation_id = "module.main_elastic_ip.eip_output${count.index}.id"
+  subnet_id     = "module.main_public_subnet.subnet${count.index}.id"
 
-  tags = {
-    Name = "main-nat${count.index}"
-  }
+  name = "${count.index}-main"
 }
 
 # Public route table to route to the internet gateway
-resource "aws_route_table" "public_route_table" {
-  vpc_id = aws_vpc.my-main-vpc.id
+module "main_public_route_table" {
+  source = "../mods/modules/route_table"
+  vpc_id = module.my-main-vpc.main-vpc-id
+  cidr_block = "0.0.0.0/0"
+  gateway_id = module.my_internet_gateway.internet_gateway_id
 
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.my_internet_gateway.id
-  }
 
-  tags = {
-    Name = "main-public"
-  }
+  name = "public"
 }
 
 # Associating public route table with public subnets
-resource "aws_route_table_association" "main" {
+module "main_public_route_table_association" {
   count = length(var.public_subnet_cidr)
 
-  subnet_id      = aws_subnet.public_subnet[count.index].id
-  route_table_id = aws_route_table.public_route_table.id
+  source         = "../mods/modules/route_table_association"
+  subnet_id      = "module.main_public_subnet.subnet${count.index}.id"
+  route_table_id = module.main_public_route_table.route-table.id
+
 }
 
 # Private route table to route to the NAT gateway
-resource "aws_route_table" "private_route_table" {
+module "main_private_route_table" {
   count = length(var.private_subnet_cidr)
 
-  vpc_id = aws_vpc.my-main-vpc.id
+  source = "../mods/modules/nat_route_table"
+  vpc_id = module.my-main-vpc.main-vpc-id
+  cidr_block     = "0.0.0.0/0"
+  nat_gateway_id = "module.main_nat_gateway.nat_gateway_output${count.index}.id"
 
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat_gateway[count.index].id
-  }
 
-  tags = {
-    Name = "main-private${count.index}"
-  }
+  name = "private"
 }
-
 
 # Associating private route table with private subnets
-resource "aws_route_table_association" "pvt-main" {
+module "main_private_route_table_association" {
   count = length(var.private_subnet_cidr)
 
-  subnet_id      = aws_subnet.private_subnet[count.index].id
-  route_table_id = aws_route_table.private_route_table[count.index].id
+  source         = "../mods/modules/route_table_association"
+  subnet_id      = "module.main_private_subnet.subnet${count.index}.id"
+  route_table_id = "module.main_private_route_table.route-table${count.index}.id"
+
 }
+
+
+
+
+
