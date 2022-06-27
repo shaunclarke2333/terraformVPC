@@ -1,6 +1,6 @@
 # S3 bucket that holds state file.
 resource "aws_s3_bucket" "main-s3bucket" {
-  bucket = var.bucket
+  bucket        = var.bucket
   force_destroy = var.force_destroy
 
   server_side_encryption_configuration {
