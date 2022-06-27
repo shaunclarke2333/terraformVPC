@@ -1,4 +1,4 @@
-# Dynamodb table to use for terraform state locking
+# Dynamodb table to use for terraform state locking.
 resource "aws_dynamodb_table" "main-terraformstatelock" {
   billing_mode   = var.billing_mode
   hash_key       = var.hash_key
@@ -11,17 +11,17 @@ resource "aws_dynamodb_table" "main-terraformstatelock" {
 
   attribute {
     name = var.attribute_name
-    type = var.type
+    type = var.attribute_type
   }
 
   point_in_time_recovery {
-    enabled = var.enabled
+    enabled = var.point_in_time_recovery_enabled
   }
 
   timeouts {}
 
   lifecycle {
-    prevent_destroy = var.prevent_destroy
+    prevent_destroy = true
   }
 
 }

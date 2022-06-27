@@ -1,4 +1,3 @@
-
 variable "billing_mode" {
   description = "This is for the billing mode input variable"
 }
@@ -27,15 +26,10 @@ variable "attribute_name" {
   description = "This is for the attribute name input variable"
 }
 
-variable "type" {
+variable "attribute_type" {
   description = "This is for the type input variable"
 }
 
-variable "enabled" {
+variable "point_in_time_recovery_enabled" {
   description = "This is for the enabled input variable"
 }
-
-variable "prevent_destroy" {
-  description = "This is for the prevent destroy input variable"
-}
-

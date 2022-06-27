@@ -1,6 +1,9 @@
-
 variable "bucket" {
   description = "variable for bucket name input"
+}
+
+variable "force_destroy" {
+  description = "variable for force_destroy input"
 }
 
 variable "bucket_key_enabled" {
@@ -11,14 +14,11 @@ variable "algorithm" {
   description = "variable for sse algorithm input"
 }
 
-variable "enabled" {
+variable "versioning_enabled" {
   description = "variable for versioning enabled input"
 }
 
-variable "mfa_delete" {
+variable "versioning_mfa_delete" {
   description = "variable for mfa delete input"
 }
 
-variable "prevent_destroy" {
-  description = "variable for prevent destroy input"
-}
