@@ -23,7 +23,9 @@ module "main-elb" {
   health_check_mathcer             = 200
 
   # ELB listener to forward traffic from load balancer to target group
+  load_balancer_arn = module.main-elb.main-elb-output.arn
   listener_port                = "80"
   listener_protocol            = "HTTP"
   listener_defualt_action_type = "forward"
+  target_group_arn = module.main-elb.main-target-group.arn
 }
