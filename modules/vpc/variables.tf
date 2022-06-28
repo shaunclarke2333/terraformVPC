@@ -8,6 +8,14 @@ variable "vpc_tag_name" {
   description = "This will be used as the input for the VPC name"
 }
 
+variable "public_subnet_cidr" {
+  description = "varible for public subnet_cidr for count input"
+}
+
+variable "private_subnet_cidr" {
+  description = "varible for private subnet_cidr for count input"
+}
+
 variable "public_availability_zone" {
   description = "varible for public availability zone input"
 }
@@ -16,11 +24,11 @@ variable "private_availability_zone" {
   description = "varible for private subnet availability zone input"
 }
 
-variable "public_subnet_cidr" {
+variable "public_subnet_cidr_block" {
   description = "varible for public subnet_cidr block input"
 }
 
-variable "private_subnet_cidr" {
+variable "private_subnet_cidr_block" {
   description = "varible for public subnet_cidr block input"
 }
 
@@ -44,8 +52,16 @@ variable "tag_nat_name" {
   description = "nat gateway tag variable input"
 }
 
+variable "public_route_table_cidr_block" {
+  description = "public route table cidr block variable input"
+}
+
 variable "tag_pub_route_table_name" {
   description = "tag route table name variable input"
+}
+
+variable "private_route_table_cidr_block" {
+  description = "private route table cidr variable input"
 }
 
 variable "tag_pvt_route_table_name" {
@@ -100,5 +116,3 @@ variable "sg_egress_cidr_blocks" {
 variable "sg_tag_name" {
   description = "input variable for security group tag name"
 }
-
-

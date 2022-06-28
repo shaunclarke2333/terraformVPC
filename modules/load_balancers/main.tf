@@ -17,6 +17,7 @@ resource "aws_lb_target_group" "main-target-group" {
   port     = var.target_group_port
   protocol = var.target_group_protocol
   vpc_id   = var.vpc_id
+  
   health_check {
     enabled             = var.health_check_enabled
     path                = var.health_check_path
@@ -41,4 +42,3 @@ resource "aws_lb_listener" "main-lb-listener" {
     target_group_arn = var.target_group_arn
   }
 }
-

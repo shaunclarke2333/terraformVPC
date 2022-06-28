@@ -10,23 +10,27 @@ resource "aws_vpc" "my-main-vpc" {
 
 # Public subnets in my-main-vpc
 resource "aws_subnet" "public_subnet" {
-  availability_zone = var.public_availability_zone
-  vpc_id     = aws_vpc.my-main-vpc.id
-  cidr_block = var.public_subnet_cidr
+  count = length(var.public_subnet_cidr)
+
+  availability_zone = var.public_availability_zone[count.index]
+  vpc_id            = aws_vpc.my-main-vpc.id
+  cidr_block        = var.public_subnet_cidr_block[count.index]
 
   tags = {
-    Name = "${var.public_subnet_tag_name}-subnet"
+    Name = "${count.index}-${var.public_subnet_tag_name}-subnet"
   }
 }
 
 # Private subnets in my-main-vpc
 resource "aws_subnet" "private_subnet" {
-  availability_zone = var.private_availability_zone
-  vpc_id     = aws_vpc.my-main-vpc.id
-  cidr_block = var.private_subnet_cidr
+  count = length(var.private_subnet_cidr)
+
+  availability_zone = var.private_availability_zone[count.index]
+  vpc_id            = aws_vpc.my-main-vpc.id
+  cidr_block        = var.private_subnet_cidr_block[count.index]
 
   tags = {
-    Name = "${var.private_subnet_tag_name}-subnet"
+    Name = "${count.index}-${var.private_subnet_tag_name}-subnet"
   }
 }
 
@@ -41,13 +45,14 @@ resource "aws_internet_gateway" "my_internet_gateway" {
 
 # Elastic IP for NAT gateway
 resource "aws_eip" "nat" {
+  count = length(var.public_subnet_cidr)
+
   vpc = true
 
   tags = {
-    "Name" = "${var.tag_eip_name}-elastic-ip"
+    "Name" = "${count.index}-${var.tag_eip_name}-elastic-ip"
   }
 }
-
 
 # NAT gateway to allow private subnet to communicate with the internet
 resource "aws_nat_gateway" "nat_gateway" {
@@ -57,7 +62,7 @@ resource "aws_nat_gateway" "nat_gateway" {
   subnet_id     = aws_subnet.public_subnet[count.index].id
 
   tags = {
-    Name = "${var.tag_nat_name}-nat-gateway-${count.index}"
+    Name = "${count.index}-${var.tag_nat_name}-nat-gateway"
   }
 }
 

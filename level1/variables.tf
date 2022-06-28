@@ -14,4 +14,3 @@ variable "private_subnet_cidr" {
     "10.0.3.0/24"
   ]
 }
-

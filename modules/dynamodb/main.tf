@@ -21,7 +21,7 @@ resource "aws_dynamodb_table" "main-terraformstatelock" {
   timeouts {}
 
   lifecycle {
-    prevent_destroy = false
+    prevent_destroy = true
   }
 
 }
