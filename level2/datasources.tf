@@ -29,3 +29,9 @@ data "aws_ami" "ubuntu" {
 data "aws_iam_policy" "session-mamanger-policy" {
   name = "AmazonSSMManagedInstanceCore"
 }
+
+# Data source for route 53 hosted zone
+data "aws_route53_zone" "shaunsawslabzone" {
+  name         = "shaunsawslab.link"
+  private_zone = false
+}
