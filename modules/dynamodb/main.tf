@@ -25,4 +25,3 @@ resource "aws_dynamodb_table" "main-terraformstatelock" {
   }
 
 }
-
