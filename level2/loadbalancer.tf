@@ -26,6 +26,7 @@ module "main-elb" {
   load_balancer_arn            = module.main-elb.main-elb-output.arn
   listener_port                = "80"
   listener_protocol            = "HTTP"
+  certificate_arn              = module.elb_friendly_name.acm_certificate_output.certificate_arn
   listener_defualt_action_type = "forward"
   target_group_arn             = module.main-elb.main-target-group.arn
 }

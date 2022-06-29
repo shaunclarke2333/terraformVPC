@@ -36,6 +36,7 @@ resource "aws_lb_listener" "main-lb-listener" {
   load_balancer_arn = var.load_balancer_arn
   port              = var.listener_port
   protocol          = var.listener_protocol
+  certificate_arn   = var.certificate_arn
 
   default_action {
     type             = var.listener_defualt_action_type

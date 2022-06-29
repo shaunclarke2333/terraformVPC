@@ -82,6 +82,10 @@ variable "listener_protocol" {
   description = "input variable for load balancer listener protocol"
 }
 
+variable "certificate_arn" {
+  description = "input variable for load balancer certificate_arn"
+}
+
 variable "listener_defualt_action_type" {
   description = "input variable for load balancer listener default action type"
 }
