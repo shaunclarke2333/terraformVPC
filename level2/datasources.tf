@@ -25,11 +25,6 @@ data "aws_ami" "ubuntu" {
   owners = ["aws-marketplace"]
 }
 
-#Data source for AWS S3 full access policy
-data "aws_iam_policy" "s3-fullaccess-policy" {
-  name = "AmazonS3FullAccess"
-}
-
 #Data source policy for Amazon EC2 Role to enable AWS Systems Manager service core functionality
 data "aws_iam_policy" "session-mamanger-policy" {
   name = "AmazonSSMManagedInstanceCore"

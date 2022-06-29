@@ -1,20 +1,27 @@
-#Output for main-vpc id
+# Output for main-vpc id
 output "main-vpc-id" {
   description = "will be used by devices that depend on the vpc ID"
-  value       = aws_vpc.my-main-vpc.id
+  value       = module.main-vpc.main-vpc-id
   sensitive   = true
 }
 
 # Output for all main public subnets id
 output "main-public-subnet" {
   description = "will be used by devices that depend on public subnet ID"
-  value       = aws_subnet.public_subnet
-  sensitive   = false
+  value       = module.main-vpc.public_subnet
+  sensitive   = true
 }
 
-# Output for main-private0 subnet id
+# Output for main-private subnet id
 output "main-private-subnet" {
   description = "will be used by devices that depend on private subnet ID"
-  value       = aws_subnet.private_subnet
+  value       = module.main-vpc.private_subnet
+  sensitive   = true
+}
+
+# Output for security group 
+output "main-security-group" {
+  description = "will be used by devices that depend on private subnet ID"
+  value       = module.main-vpc.main-security-group-output.id
   sensitive   = true
 }
