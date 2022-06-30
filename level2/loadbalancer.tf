@@ -1,12 +1,34 @@
 #Application load balancer, target group and listener
 module "main-elb" {
-  source                 = "../modules/load_balancers"
+  source = "../modules/load_balancers"
+
+  # Security group for the main-loab-balancer Allow port 443 TCP inbound to ELB
+  sg_name        = "main-elb-security-group"
+  sg_description = "Allow port 443 TCP inbound"
+  sg_vpc_id      = data.terraform_remote_state.level1-main-vpc.outputs.main-vpc-id
+
+  #ingress
+  sg_443_ingress_description = "https to ELB"
+  sg_443_ingress_from_port   = 443
+  sg_443_ingress_to_port     = 443
+  sg_443_ingress_protocol    = "tcp"
+  sg_443_ingress_cidr_blocks = ["0.0.0.0/0"]
+
+  #egress
+  sg_egress_from_port   = 0
+  sg_egress_to_port     = 65535
+  sg_egress_protocol    = "tcp"
+  sg_egress_cidr_blocks = ["0.0.0.0/0"]
+
+  #tags
+  sg_tag_name = "main-elb"
+
+  #Application load balancer
   load_balancer_name     = "main-load-balancer"
   load_balancer_internal = false
   load_balancer_type     = "application"
-  security_groups        = [data.terraform_remote_state.level1-main-vpc.outputs.main-security-group]
   subnets                = [for subnet in data.terraform_remote_state.level1-main-vpc.outputs.main-public-subnet : subnet.id]
-  name_tag               = "main"
+  name_tag               = "main_elb"
 
   # Target group for elb
   target_group_name                = "main-target-group"

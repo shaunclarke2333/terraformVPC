@@ -59,31 +59,4 @@ module "main-vpc" {
   # Private route table to route to the NAT gateway
   private_route_table_cidr_block = "0.0.0.0/0"
   tag_pvt_route_table_name       = "main"
-
-  # Security group for the main-loab-balancer Allow port 80 TCP inbound to ELB
-  sg_name        = "main-security-group"
-  sg_description = "Allow port 80 TCP inbound"
-
-  #ingress
-  sg_ingress_description = "http to ELB"
-  sg_ingress_from_port   = 80
-  sg_ingress_to_port     = 80
-  sg_ingress_protocol    = "tcp"
-  sg_ingress_cidr_blocks = ["0.0.0.0/0"]
-
-  #ingress
-  sg_443_ingress_description = "https to ELB"
-  sg_443_ingress_from_port   = 443
-  sg_443_ingress_to_port     = 443
-  sg_443_ingress_protocol    = "tcp"
-  sg_443_ingress_cidr_blocks = ["0.0.0.0/0"]
-
-  #egress
-  sg_egress_from_port   = 0
-  sg_egress_to_port     = 65535
-  sg_egress_protocol    = "tcp"
-  sg_egress_cidr_blocks = ["0.0.0.0/0"]
-
-  #tags
-  sg_tag_name = "main"
 }

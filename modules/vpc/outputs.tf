@@ -19,11 +19,6 @@ output "private_subnet" {
   sensitive   = true
 }
 
-output "main-security-group-output" {
-  description = "outputs the ID for main security group "
-  value       = aws_security_group.main-elb-tcp80.id
-}
-
 output "elastic_ip_output" {
   description = "outputs for elastic ip "
   value       = aws_eip.nat

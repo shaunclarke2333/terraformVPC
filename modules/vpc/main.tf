@@ -112,37 +112,3 @@ resource "aws_route_table_association" "pvt-main" {
   subnet_id      = aws_subnet.private_subnet[count.index].id
   route_table_id = aws_route_table.private_route_table[count.index].id
 }
-
-# Security group for the main-loab-balancer Allow port 80 TCP inbound to ELB
-resource "aws_security_group" "main-elb-tcp80" {
-  name        = var.sg_name
-  description = var.sg_description
-  vpc_id      = aws_vpc.my-main-vpc.id
-
-  ingress {
-    description = var.sg_ingress_description
-    from_port   = var.sg_ingress_from_port
-    to_port     = var.sg_ingress_to_port
-    protocol    = var.sg_ingress_protocol
-    cidr_blocks = var.sg_ingress_cidr_blocks
-  }
-
-  ingress {
-    description = var.sg_443_ingress_description
-    from_port   = var.sg_443_ingress_from_port
-    to_port     = var.sg_443_ingress_to_port
-    protocol    = var.sg_443_ingress_protocol
-    cidr_blocks = var.sg_443_ingress_cidr_blocks
-  }
-
-  egress {
-    from_port   = var.sg_egress_from_port
-    to_port     = var.sg_egress_to_port
-    protocol    = var.sg_egress_protocol
-    cidr_blocks = var.sg_egress_cidr_blocks
-  }
-
-  tags = {
-    Name = "${var.sg_tag_name}-sg"
-  }
-}

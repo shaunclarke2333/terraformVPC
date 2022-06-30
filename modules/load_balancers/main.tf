@@ -1,9 +1,35 @@
+# Security group for the main-loab-balancer Allow port 80 TCP inbound to ELB
+resource "aws_security_group" "main-elb-tcp443" {
+  name        = var.sg_name
+  description = var.sg_description
+  vpc_id      = var.sg_vpc_id
+
+  ingress {
+    description = var.sg_443_ingress_description
+    from_port   = var.sg_443_ingress_from_port
+    to_port     = var.sg_443_ingress_to_port
+    protocol    = var.sg_443_ingress_protocol
+    cidr_blocks = var.sg_443_ingress_cidr_blocks
+  }
+
+  egress {
+    from_port   = var.sg_egress_from_port
+    to_port     = var.sg_egress_to_port
+    protocol    = var.sg_egress_protocol
+    cidr_blocks = var.sg_egress_cidr_blocks
+  }
+
+  tags = {
+    Name = "${var.sg_tag_name}-sg"
+  }
+}
+
 #Application load balancer.
 resource "aws_lb" "main-elb" {
   name               = var.load_balancer_name
   internal           = var.load_balancer_internal
   load_balancer_type = var.load_balancer_type
-  security_groups    = var.security_groups
+  security_groups    = [aws_security_group.main-elb-tcp443.id]
   subnets            = var.subnets
 
   tags = {

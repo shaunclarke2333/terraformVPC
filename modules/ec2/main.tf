@@ -28,10 +28,36 @@ resource "aws_iam_role" "iam_role" {
   }
 }
 
-# Resource block for instance profile
+# Resource block for instance profile.
 resource "aws_iam_instance_profile" "iam_instance_profile" {
   name = var.iam_instance_profile_name
   role = aws_iam_role.iam_role.name
+}
+
+# Security group for the main-loab-balancer Allow port 80 TCP inbound to ELB
+resource "aws_security_group" "main-elb-tcp80" {
+  name        = var.sg_name
+  description = var.sg_description
+  vpc_id      = var.sg_vpc_id
+
+  ingress {
+    description = var.sg_ingress_description
+    from_port   = var.sg_ingress_from_port
+    to_port     = var.sg_ingress_to_port
+    protocol    = var.sg_ingress_protocol
+    cidr_blocks = var.sg_ingress_cidr_blocks
+  }
+
+  egress {
+    from_port   = var.sg_egress_from_port
+    to_port     = var.sg_egress_to_port
+    protocol    = var.sg_egress_protocol
+    cidr_blocks = var.sg_egress_cidr_blocks
+  }
+
+  tags = {
+    Name = "${var.sg_tag_name}-sg"
+  }
 }
 
 
@@ -46,7 +72,7 @@ resource "aws_launch_template" "launch-template" {
     name = aws_iam_instance_profile.iam_instance_profile.name
   }
 
-  vpc_security_group_ids = var.vpc_security_group_ids
+  vpc_security_group_ids = [aws_security_group.main-elb-tcp80.id]
 
   tag_specifications {
     resource_type = var.resource_type
