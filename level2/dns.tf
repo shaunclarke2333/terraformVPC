@@ -7,4 +7,12 @@ module "elb_friendly_name" {
   alias_name             = module.main-elb.main-elb-output.dns_name
   alias_zone_id          = module.main-elb.main-elb-output.zone_id
   evaluate_target_health = true
+
+  # Creating aws ssl certificate
+  domain_name          = "loadbalancer.shaunsawslab.link"
+  validation_method    = "DNS"
+  certificate_tag_name = "main-ssl"
+
+  # domain validation option record
+  validation_zone_id = data.aws_route53_zone.shaunsawslabzone.id
 }

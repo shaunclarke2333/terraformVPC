@@ -1,3 +1,55 @@
+variable "sg_name" {
+  description = "input variable for security group name "
+}
+
+variable "sg_description" {
+  description = "input variable for security group description"
+}
+
+variable "sg_vpc_id" {
+  description = "input variable for security group vpc id"
+}
+
+variable "sg_443_ingress_description" {
+  description = "input variable for security group 443 ingress  description"
+}
+
+variable "sg_443_ingress_from_port" {
+  description = "input variable for security group 443 ingress  from port"
+}
+
+variable "sg_443_ingress_to_port" {
+  description = "input variable for security group 443 ingress  to port"
+}
+
+variable "sg_443_ingress_protocol" {
+  description = "input variable for security group 443 ingress  protocol"
+}
+
+variable "sg_443_ingress_cidr_blocks" {
+  description = "input variable for security group 443 ingress  cidr block"
+}
+
+variable "sg_egress_from_port" {
+  description = "input variable for security group egress from port"
+}
+
+variable "sg_egress_to_port" {
+  description = "input variable for security group egress to port"
+}
+
+variable "sg_egress_protocol" {
+  description = "input variable for security group egress protocol"
+}
+
+variable "sg_egress_cidr_blocks" {
+  description = "input variable for security group egress cidr blocks"
+}
+
+variable "sg_tag_name" {
+  description = "input variable for security group tag name"
+}
+
 variable "load_balancer_name" {
   description = "input variable for load balancer name"
 }
@@ -8,10 +60,6 @@ variable "load_balancer_internal" {
 
 variable "load_balancer_type" {
   description = "input variable for load balancer type"
-}
-
-variable "security_groups" {
-  description = "input variable for load balancer security groups"
 }
 
 variable "subnets" {
@@ -82,10 +130,15 @@ variable "listener_protocol" {
   description = "input variable for load balancer listener protocol"
 }
 
+variable "certificate_arn" {
+  description = "input variable for load balancer certificate_arn"
+}
+
+variable "ssl_policy" {
+  description = "input variable for load balancer listener 443 ssl_policy"
+}
+
 variable "listener_defualt_action_type" {
   description = "input variable for load balancer listener default action type"
 }
 
-variable "target_group_arn" {
-  description = "input variable for load balancer target_group_arn"
-}
