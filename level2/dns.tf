@@ -12,4 +12,7 @@ module "elb_friendly_name" {
   domain_name          = "loadbalancer.shaunsawslab.link"
   validation_method    = "DNS"
   certificate_tag_name = "main-ssl"
+
+  # domain validation option record
+  validation_zone_id = data.aws_route53_zone.shaunsawslabzone.id
 }

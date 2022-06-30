@@ -22,6 +22,6 @@ output "main-private-subnet" {
 # Output for security group 
 output "main-security-group" {
   description = "will be used by devices that depend on private subnet ID"
-  value       = module.main-vpc.main-security-group-output.id
+  value       = module.main-vpc.main-security-group-output
   sensitive   = true
 }

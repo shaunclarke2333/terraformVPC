@@ -31,15 +31,33 @@ resource "aws_lb_target_group" "main-target-group" {
   }
 }
 
+# # ELB listener to redirect traffic from port 80 listener to port 443 listener
+# resource "aws_lb_listener" "main-lb-listener_port80" {
+#   load_balancer_arn = aws_lb.main-elb.arn
+#   port              = "80"
+#   protocol          = "HTTP"
+
+#   default_action {
+#     type = "redirect"
+
+#     redirect {
+#       port        = "443"
+#       protocol    = "HTTPS"
+#       status_code = "HTTP_301"
+#     }
+#   }
+# }
+
 # ELB listener to forward traffic from load balancer to target group
-resource "aws_lb_listener" "main-lb-listener" {
+resource "aws_lb_listener" "main-lb-listener_port443" {
   load_balancer_arn = var.load_balancer_arn
   port              = var.listener_port
   protocol          = var.listener_protocol
+  ssl_policy        = var.ssl_policy
   certificate_arn   = var.certificate_arn
 
   default_action {
     type             = var.listener_defualt_action_type
-    target_group_arn = var.target_group_arn
+    target_group_arn = aws_lb_target_group.main-target-group.arn
   }
 }

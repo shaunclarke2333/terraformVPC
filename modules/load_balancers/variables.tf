@@ -86,10 +86,11 @@ variable "certificate_arn" {
   description = "input variable for load balancer certificate_arn"
 }
 
+variable "ssl_policy" {
+  description = "input variable for load balancer listener 443 ssl_policy"
+}
+
 variable "listener_defualt_action_type" {
   description = "input variable for load balancer listener default action type"
 }
 
-variable "target_group_arn" {
-  description = "input variable for load balancer target_group_arn"
-}

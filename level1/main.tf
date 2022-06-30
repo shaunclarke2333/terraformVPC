@@ -71,6 +71,13 @@ module "main-vpc" {
   sg_ingress_protocol    = "tcp"
   sg_ingress_cidr_blocks = ["0.0.0.0/0"]
 
+  #ingress
+  sg_443_ingress_description = "https to ELB"
+  sg_443_ingress_from_port   = 443
+  sg_443_ingress_to_port     = 443
+  sg_443_ingress_protocol    = "tcp"
+  sg_443_ingress_cidr_blocks = ["0.0.0.0/0"]
+
   #egress
   sg_egress_from_port   = 0
   sg_egress_to_port     = 65535

@@ -23,10 +23,12 @@ module "main-elb" {
   health_check_mathcer             = 200
 
   # ELB listener to forward traffic from load balancer to target group
-  load_balancer_arn            = module.main-elb.main-elb-output.arn
-  listener_port                = "80"
-  listener_protocol            = "HTTP"
-  certificate_arn              = module.elb_friendly_name.acm_certificate_output.certificate_arn
+  load_balancer_arn = module.main-elb.main-elb-output.arn
+  listener_port     = "443"
+  listener_protocol = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = module.elb_friendly_name.acm_certificate_output.certificate_arn
+
+  #Default action type
   listener_defualt_action_type = "forward"
-  target_group_arn             = module.main-elb.main-target-group.arn
 }

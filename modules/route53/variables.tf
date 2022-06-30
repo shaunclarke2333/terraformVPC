@@ -33,3 +33,7 @@ variable "validation_method" {
 variable "certificate_tag_name" {
   description = "input variable for certificate_tag_name"
 }
+
+variable "validation_zone_id" {
+  description = "input variable for validation_zone_id"
+}

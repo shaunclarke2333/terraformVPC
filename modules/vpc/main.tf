@@ -127,6 +127,14 @@ resource "aws_security_group" "main-elb-tcp80" {
     cidr_blocks = var.sg_ingress_cidr_blocks
   }
 
+  ingress {
+    description = var.sg_443_ingress_description
+    from_port   = var.sg_443_ingress_from_port
+    to_port     = var.sg_443_ingress_to_port
+    protocol    = var.sg_443_ingress_protocol
+    cidr_blocks = var.sg_443_ingress_cidr_blocks
+  }
+
   egress {
     from_port   = var.sg_egress_from_port
     to_port     = var.sg_egress_to_port
