@@ -13,6 +13,13 @@ data "aws_secretsmanager_secret_version" "rds-secret-password" {
   secret_id = data.aws_secretsmanager_secret.rds-secret.id
 }
 
+# Using locals to assign the name main-rds-password to the decoded json expression
+locals {
+  main-rds-password = jsondecode(
+    data.aws_secretsmanager_secret_version.rds-secret-password.secret_string
+  )["password"]
+}
+
 #subnet group for private subnets
 resource "aws_db_subnet_group" "db_subnet_group" {
   name       = var.subnet_group_name
@@ -40,7 +47,7 @@ resource "aws_db_parameter_group" "db_parameter_group" {
 }
 
 # Security group for to allow inbounf traffic to 
-resource "aws_security_group" "main-elb-tcp80" {
+resource "aws_security_group" "main-elb-tcp3306" {
   name        = var.sg_name
   description = var.sg_description
   vpc_id      = var.sg_vpc_id
@@ -67,6 +74,7 @@ resource "aws_security_group" "main-elb-tcp80" {
 
 # Module for RDS instance
 resource "aws_db_instance" "default" {
+  identifier              = var.db_identifier
   allocated_storage       = var.allocated_storage
   storage_type            = var.storage_type
   engine                  = var.engine
@@ -75,11 +83,12 @@ resource "aws_db_instance" "default" {
   port                    = var.db_port
   name                    = var.rds_name
   username                = var.rds_username
-  password                = data.aws_secretsmanager_secret_version.rds-secret-password
-  parameter_group_name    = var.parameter_group_name
+  password                = local.main-rds-password
+  parameter_group_name    = aws_db_parameter_group.db_parameter_group.name
   skip_final_snapshot     = var.skip_final_snapshot
   multi_az                = var.multi_az
-  vpc_security_group_ids  = var.vpc_security_group_ids
+  db_subnet_group_name    = aws_db_subnet_group.db_subnet_group.name
+  vpc_security_group_ids  = [aws_security_group.main-elb-tcp3306.id]
   backup_retention_period = var.backup_retention_period
   backup_window           = var.backup_window
 }

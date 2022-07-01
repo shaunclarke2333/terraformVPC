@@ -29,6 +29,14 @@ module "main-autoscaling-group" {
   sg_ingress_protocol    = "tcp"
   sg_ingress_cidr_blocks = ["0.0.0.0/0"]
 
+  #ingress
+  sg_3306_ingress_description = "3306 sql port inbound"
+  sg_3306_ingress_from_port   = 3306
+  sg_3306_ingress_to_port     = 3306
+  sg_3306_ingress_protocol    = "tcp"
+  sg_3306_ingress_cidr_blocks = ["0.0.0.0/0"]
+
+
   #egress
   sg_egress_from_port   = 0
   sg_egress_to_port     = 65535

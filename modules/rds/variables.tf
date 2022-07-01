@@ -46,6 +46,9 @@ variable "sg_ingress_to_port" {
 variable "sg_ingress_protocol" {
   description = "variable input for sg_ingress_protocol"
 }
+variable "sg_ingress_security_groups" {
+  description = "variable input for sg_ingress_cidr_blocks"
+}
 
 variable "sg_egress_from_port" {
   description = "variable input for sg_egress_from_port"
@@ -65,6 +68,10 @@ variable "sg_egress_cidr_blocks" {
 
 variable "sg_tag_name" {
   description = "variable input for sg_tag_name"
+}
+
+variable "db_identifier" {
+  description = "variable input for db_identifier"
 }
 
 variable "allocated_storage" {
@@ -99,20 +106,12 @@ variable "rds_username" {
   description = "variable input for rds_username"
 }
 
-variable "parameter_group_name" {
-  description = "variable input for parameter_group_name"
-}
-
 variable "skip_final_snapshot" {
   description = "variable input for skip_final_snapshot"
 }
 
 variable "multi_az" {
   description = "variable input for multi_az"
-}
-
-variable "vpc_security_group_ids" {
-  description = "variable input for "
 }
 
 variable "backup_retention_period" {
