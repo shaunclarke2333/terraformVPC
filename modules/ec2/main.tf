@@ -34,7 +34,7 @@ resource "aws_iam_instance_profile" "iam_instance_profile" {
   role = aws_iam_role.iam_role.name
 }
 
-# Security group for the main-loab-balancer Allow port 80 TCP inbound to ELB
+# Security group for the launch template Allow port 80 and 3306 TCP inbound to asg instances
 resource "aws_security_group" "main-elb-tcp80" {
   name        = var.sg_name
   description = var.sg_description
@@ -46,6 +46,14 @@ resource "aws_security_group" "main-elb-tcp80" {
     to_port     = var.sg_ingress_to_port
     protocol    = var.sg_ingress_protocol
     cidr_blocks = var.sg_ingress_cidr_blocks
+  }
+
+  ingress {
+    description = var.sg_3306_ingress_description
+    from_port   = var.sg_3306_ingress_from_port
+    to_port     = var.sg_3306_ingress_to_port
+    protocol    = var.sg_3306_ingress_protocol
+    cidr_blocks = var.sg_3306_ingress_cidr_blocks
   }
 
   egress {
