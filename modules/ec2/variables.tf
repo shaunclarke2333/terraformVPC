@@ -67,6 +67,26 @@ variable "sg_ingress_cidr_blocks" {
   description = "input variable for security group ingress cidr block"
 }
 
+variable "sg_3306_ingress_description" {
+  description = "input variable for security group 3306_ingress description"
+}
+
+variable "sg_3306_ingress_from_port" {
+  description = "input variable for security group 3306_ingress from port"
+}
+
+variable "sg_3306_ingress_to_port" {
+  description = "input variable for security group 3306_ingress to port"
+}
+
+variable "sg_3306_ingress_protocol" {
+  description = "input variable for security group 3306_ingress protocol"
+}
+
+variable "sg_3306_ingress_cidr_blocks" {
+  description = "input variable for security group 3306_ingress cidr block"
+}
+
 variable "sg_egress_from_port" {
   description = "input variable for security group egress from port"
 }
