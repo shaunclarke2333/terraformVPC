@@ -1,7 +1,7 @@
 # Output for main-vpc id
 output "main-vpc-id" {
   description = "will be used by devices that depend on the vpc ID"
-  value       = module.main-vpc.main-vpc-id
+  value       = module.main-vpc.vpc_id
   sensitive   = true
 }
 
