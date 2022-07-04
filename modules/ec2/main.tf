@@ -103,6 +103,7 @@ resource "aws_autoscaling_group" "main-autoscaling-group" {
   vpc_zone_identifier       = var.asg_vpc_zone_identifier
   target_group_arns         = var.asg_target_group_arns
 
+
   launch_template {
     id      = aws_launch_template.launch-template.id
     version = var.launch_template_version

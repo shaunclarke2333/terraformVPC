@@ -8,13 +8,13 @@ output "main-vpc-id" {
 # Output for all main public subnets id
 output "main-public-subnet" {
   description = "will be used by devices that depend on public subnet ID"
-  value       = module.main-vpc.public_subnet
+  value       = module.main-vpc.public_subnets
   sensitive   = true
 }
 
 # Output for main-private subnet id
 output "main-private-subnet" {
   description = "will be used by devices that depend on private subnet ID"
-  value       = module.main-vpc.private_subnet
+  value       = module.main-vpc.private_subnets
   sensitive   = true
 }
