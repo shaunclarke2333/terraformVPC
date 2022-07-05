@@ -28,13 +28,12 @@ module "rds-security-group" {
   description = "Allow port 3306 TCP inbound to RDS within VPC"
   vpc_id      = data.terraform_remote_state.level1-main-vpc.outputs.main-vpc-id
 
-
   ingress_with_cidr_blocks = [
     { # port 3306 SQL port ingress rule
       from_port   = 3306
       to_port     = 3306
       protocol    = "tcp"
-      description = "https to ELB"
+      description = "inbound to sql"
       cidr_blocks = "0.0.0.0/0"
     }
   ]
@@ -44,7 +43,7 @@ module "rds-security-group" {
       from_port   = 0
       to_port     = 65535
       protocol    = "tcp"
-      description = "https to ELB"
+      description = "rds-sg-out"
       cidr_blocks = "0.0.0.0/0"
     }
   ]
@@ -59,19 +58,18 @@ module "mysql-rds" {
 
   identifier = "main-mysql-database"
 
-  storage_type      = "gp2"
+  storage_type            = "gp2"
   engine            = "mysql"
   engine_version    = "8.0"
   instance_class    = "db.t3.micro"
   allocated_storage = 20
 
-  db_name              = "mydb"
-  username             = "shaun"
-  password             = local.main-rds-password
-  port                 = "3306"
-  skip_final_snapshot  = true
-  multi_az             = false
-  parameter_group_name = "main-mysql8"
+  db_name  = "mydb"
+  username = "shaun"
+  password = local.main-rds-password
+  port     = "3306"
+  skip_final_snapshot     = true
+  multi_az                = false
 
   vpc_security_group_ids = [module.rds-security-group.security_group_id]
 
@@ -79,7 +77,7 @@ module "mysql-rds" {
   backup_window           = "09:46-10:16"
 
   tags = {
-    Name = "main-mysql-rds"
+    Name       = "main-mysql-rds"
   }
 
   # DB subnet group
