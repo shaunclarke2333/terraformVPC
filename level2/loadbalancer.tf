@@ -67,13 +67,6 @@ module "main-elb" {
         protocol            = "HTTP"
         matcher             = "200"
       }
-
-      #   targets = {
-      #     my_target = {
-      #       target_id ="${ module.main-elb.lb_id}"
-      #       port = 80
-      #     }
-      #   }
     }
   ]
 
