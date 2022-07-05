@@ -18,3 +18,10 @@ output "main-private-subnet" {
   value       = module.main-vpc.private_subnets
   sensitive   = true
 }
+
+# Output for main-private subnet cidr block
+output "main-private-subnet-cidr-block" {
+  description = "will be used by devices that depend on private subnet ID"
+  value       = module.main-vpc.private_subnets_cidr_blocks
+  sensitive   = true
+}

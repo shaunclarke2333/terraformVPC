@@ -1,8 +1,9 @@
+#Security Group to allow inboound on port 80 and 3306
 module "launch-template-sg" {
   source = "terraform-aws-modules/security-group/aws"
 
   name        = "main-lt-security-group"
-  description = "Allow port 80 TCP inbound to ec2 ASG instances within VPC"
+  description = "Allow port 80 and 3306 TCP inbound to ec2 ASG instances within VPC"
   vpc_id      = data.terraform_remote_state.level1-main-vpc.outputs.main-vpc-id
 
 
@@ -63,7 +64,7 @@ module "main-autoscaling-group" {
   image_id        = data.aws_ami.ubuntu.id
   instance_type   = var.instance_type
   key_name        = "main"
-  security_groups = [module.launch-template-sg.security_group_id]
+  security_groups = ["${module.launch-template-sg.security_group_id}"]
   user_data       = filebase64("ubuntu_bootstrap_webserver.sh")
 
   tag_specifications = [
