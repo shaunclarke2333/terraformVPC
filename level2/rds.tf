@@ -17,7 +17,7 @@ data "aws_secretsmanager_secret_version" "rds-secret-password" {
 locals {
   main-rds-password = jsondecode(
     data.aws_secretsmanager_secret_version.rds-secret-password.secret_string
-  )["password"]
+  )
 }
 
 # Security group for to allow inboun traffic om port 3306
@@ -57,17 +57,16 @@ module "mysql-rds" {
   source = "terraform-aws-modules/rds/aws"
 
   identifier = "main-mysql-database"
-
+  allocated_storage = 20
   storage_type            = "gp2"
   engine            = "mysql"
-  engine_version    = "8.0"
+  engine_version    = "5.7"
   instance_class    = "db.t3.micro"
-  allocated_storage = 20
-
+  port     = "3306"
   db_name  = "mydb"
   username = "shaun"
-  password = local.main-rds-password
-  port     = "3306"
+  password = local.main-rds-password.password
+  
   skip_final_snapshot     = true
   multi_az                = false
 
@@ -85,10 +84,10 @@ module "mysql-rds" {
   subnet_ids             = [for subnet in data.terraform_remote_state.level1-main-vpc.outputs.main-private-subnet : subnet]
 
   # DB parameter group
-  family = "mysql8.0"
+  family = "mysql5.7"
 
   # DB option group
-  major_engine_version = "8.0"
+  major_engine_version = "5.7"
 
   parameters = [
     {
