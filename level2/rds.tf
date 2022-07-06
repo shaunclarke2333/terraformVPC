@@ -17,7 +17,7 @@ data "aws_secretsmanager_secret_version" "rds-secret-password" {
 locals {
   main-rds-password = jsondecode(
     data.aws_secretsmanager_secret_version.rds-secret-password.secret_string
-  )
+  )["password"]
 }
 
 # Security group for to allow inboun traffic om port 3306
@@ -65,7 +65,7 @@ module "mysql-rds" {
   port     = "3306"
   db_name  = "mydb"
   username = "shaun"
-  password = local.main-rds-password.password
+  password = local.main-rds-password
   
   skip_final_snapshot     = true
   multi_az                = false
