@@ -56,7 +56,7 @@ module "rds-security-group" {
 module "mysql-rds" {
   source = "terraform-aws-modules/rds/aws"
 
-  identifier             = "main-mysql-database"
+  identifier             = "mysql-database-main"
   allocated_storage      = 20
   storage_type           = "gp2"
   engine                 = "mysql"
