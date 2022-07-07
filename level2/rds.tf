@@ -67,7 +67,6 @@ module "mysql-rds" {
   username = "shaun"
   password = local.main-rds-password
   create_random_password  = false
-  create_random_password  = false
   
   skip_final_snapshot     = true
   multi_az                = false
