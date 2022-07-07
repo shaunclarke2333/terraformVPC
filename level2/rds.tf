@@ -56,20 +56,20 @@ module "rds-security-group" {
 module "mysql-rds" {
   source = "terraform-aws-modules/rds/aws"
 
-  identifier = "main-mysql-database"
-  allocated_storage = 20
-  storage_type            = "gp2"
-  engine            = "mysql"
-  engine_version    = "5.7"
-  instance_class    = "db.t3.micro"
-  port     = "3306"
-  db_name  = "mydb"
-  username = "shaun"
-  password = local.main-rds-password
-  create_random_password  = false
-  
-  skip_final_snapshot     = true
-  multi_az                = false
+  identifier             = "main-mysql-database"
+  allocated_storage      = 20
+  storage_type           = "gp2"
+  engine                 = "mysql"
+  engine_version         = "5.7"
+  instance_class         = "db.t3.micro"
+  port                   = "3306"
+  db_name                = "mydb"
+  username               = "shaun"
+  password               = local.main-rds-password
+  create_random_password = false
+
+  skip_final_snapshot = true
+  multi_az            = false
 
   vpc_security_group_ids = [module.rds-security-group.security_group_id]
 
@@ -77,7 +77,7 @@ module "mysql-rds" {
   backup_window           = "09:46-10:16"
 
   tags = {
-    Name       = "main-mysql-rds"
+    Name = "main-mysql-rds"
   }
 
   # DB subnet group
