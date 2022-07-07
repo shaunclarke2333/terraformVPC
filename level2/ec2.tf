@@ -61,11 +61,11 @@ module "main-autoscaling-group" {
   update_default_version      = true
   launch_template_version     = "$Latest"
 
-  image_id        = data.aws_ami.ubuntu.id
+  image_id        = data.aws_ami.amazon_linux.id
   instance_type   = var.instance_type
   key_name        = "main"
   security_groups = ["${module.launch-template-sg.security_group_id}"]
-  user_data       = filebase64("ubuntu_bootstrap_webserver.sh")
+  user_data       = filebase64("bootstrap_webserver.sh")
 
   tag_specifications = [
     {
