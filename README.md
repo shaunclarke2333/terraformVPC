@@ -1,7 +1,7 @@
 
-Automating AWS VPC template build with Terraform.
+Automating AWS VPC template build with Terraform layered approach.
 
-This template contains the following resources:
+This template contains the following resources with an S3 remote state backend configuration:
 - VPC
 - Two public subnets
 - Two private subnets
@@ -9,5 +9,9 @@ This template contains the following resources:
 - Two NAT gateways
 - Public route table
 - Private route table
-
-You will be able to launch a virtual machine in a private subnet, establish an SSH connection to it, and download updates from the internet.
+- load balancer
+- autoscaling group
+- route53(dns)
+- Launch template
+- IAM role for Sessions Manager
+- RDS
