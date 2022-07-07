@@ -5,7 +5,7 @@ data "aws_availability_zones" "available" {
 
 #Datasource for RDS password secret
 data "aws_secretsmanager_secret" "rds-secret" {
-  arn = "arn:aws:secretsmanager:us-east-1:003729975368:secret:main-rds-password-lS7Tso"
+  name = "main-rds-password"
 }
 
 #Data source to retreive values from secret manager
@@ -25,7 +25,7 @@ module "rds-security-group" {
   source = "terraform-aws-modules/security-group/aws"
 
   name        = "rds-security-group"
-  description = "Allow port 3306 TCP inbound to RDS within VPC"
+  description = "Allow port 3306 TCP inbound to RDS within VPC."
   vpc_id      = data.terraform_remote_state.level1-main-vpc.outputs.main-vpc-id
 
   ingress_with_cidr_blocks = [
@@ -66,6 +66,7 @@ module "mysql-rds" {
   db_name  = "mydb"
   username = "shaun"
   password = local.main-rds-password
+  create_random_password  = false
   
   skip_final_snapshot     = true
   multi_az                = false
