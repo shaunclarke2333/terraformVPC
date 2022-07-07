@@ -4,6 +4,7 @@ variable "bucket_folders" {
   default = [
     "level0/",
     "level1/",
-    "level2/"
+    "level2/",
+    "level3/"
   ]
 }
