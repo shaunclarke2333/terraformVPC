@@ -19,7 +19,7 @@ resource "aws_s3_bucket" "main-s3bucket" {
   }
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }
 

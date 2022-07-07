@@ -10,19 +10,14 @@ data "terraform_remote_state" "level1-main-vpc" {
 }
 
 # Data source for ubuntu aws_ami 
-data "aws_ami" "ubuntu" {
+data "aws_ami" "amazon_linux" {
   most_recent = true
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
-  }
 
   filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
+    name = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-ebs"]
   }
-
-  owners = ["aws-marketplace"]
+  owners = ["amazon"]
 }
 
 #Data source policy for Amazon EC2 Role to enable AWS Systems Manager service core functionality

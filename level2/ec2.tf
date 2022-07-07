@@ -1,79 +1,91 @@
+#Security Group to allow inboound on port 80 and 3306
+module "launch-template-sg" {
+  source = "terraform-aws-modules/security-group/aws"
+
+  name        = "main-lt-security-group"
+  description = "Allow port 80 and 3306 TCP inbound to ec2 ASG instances within VPC"
+  vpc_id      = data.terraform_remote_state.level1-main-vpc.outputs.main-vpc-id
+
+
+  ingress_with_cidr_blocks = [
+    { # port 80 ingress rule
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      description = "https to ELB"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    { # port 3306 SQL port ingress rule
+      from_port   = 3306
+      to_port     = 3306
+      protocol    = "tcp"
+      description = "https to ELB"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
+
+  egress_with_cidr_blocks = [
+    {
+      from_port   = 0
+      to_port     = 65535
+      protocol    = "tcp"
+      description = "https to ELB"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
+
+  tags = {
+    name = "main-elb-sg"
+  }
+}
+
 #Module to deploy autoscaling group with launch template and IAM session manager policy
 module "main-autoscaling-group" {
-  source = "../modules/ec2"
+  source = "terraform-aws-modules/autoscaling/aws"
 
-  #AWS policy for Amazon EC2 Role to enable AWS Systems Manager service core functionality
-  policy_name = "main-session-mamanger-policy"
-  policy      = data.aws_iam_policy.session-mamanger-policy.policy
+  # Autoscaling group
+  name = "main-autoscaling-group"
 
-  #Sessions Manager role.
-  role_name                            = "main-ssm-full-access"
-  assume_role_policy_version           = "2012-10-17"
-  assume_role_policy_action            = "sts:AssumeRole"
-  assume_role_policy_effect            = "Allow"
-  assume_role_policy_principal_service = "ec2.amazonaws.com"
-  assume_role_policy_tag_name          = "main-ssm-full-access"
+  min_size                  = 2
+  max_size                  = 5
+  desired_capacity          = 4
+  health_check_grace_period = 400
+  health_check_type         = "EC2"
+  vpc_zone_identifier       = [for subnet in data.terraform_remote_state.level1-main-vpc.outputs.main-private-subnet : subnet]
+  target_group_arns         = module.main-elb.target_group_arns
+  force_delete              = true
 
-  # Resource block for instance profile
-  iam_instance_profile_name = "main-session-manager-profile"
+  # Launch template
+  launch_template_name        = "main-launch-template"
+  launch_template_description = "Launch template example"
+  update_default_version      = true
+  launch_template_version     = "$Latest"
 
-  # Security group for the main-loab-balancer Allow port 80 TCP inbound to instances
-  sg_name        = "main-lt-security-group"
-  sg_description = "Allow port 80 TCP inbound"
-  sg_vpc_id      = data.terraform_remote_state.level1-main-vpc.outputs.main-vpc-id
+  image_id        = data.aws_ami.amazon_linux.id
+  instance_type   = var.instance_type
+  key_name        = "main"
+  security_groups = ["${module.launch-template-sg.security_group_id}"]
+  user_data       = filebase64("bootstrap_webserver.sh")
 
-  #ingress
-  sg_ingress_description = "http to instances"
-  sg_ingress_from_port   = 80
-  sg_ingress_to_port     = 80
-  sg_ingress_protocol    = "tcp"
-  sg_ingress_cidr_blocks = ["0.0.0.0/0"]
+  tag_specifications = [
+    {
+      resource_type = "instance"
 
-  #ingress
-  sg_3306_ingress_description = "3306 sql port inbound"
-  sg_3306_ingress_from_port   = 3306
-  sg_3306_ingress_to_port     = 3306
-  sg_3306_ingress_protocol    = "tcp"
-  sg_3306_ingress_cidr_blocks = ["0.0.0.0/0"]
+      tags = {
+        Name = "main-ubuntu-launch-template"
+      }
+    }
+  ]
 
-
-  #egress
-  sg_egress_from_port   = 0
-  sg_egress_to_port     = 65535
-  sg_egress_protocol    = "tcp"
-  sg_egress_cidr_blocks = ["0.0.0.0/0"]
-
-  #tags
-  sg_tag_name = "main_launch_template"
-
-  #AWS ubuntu launch template
-  launch_template_name          = "main-launch-template"
-  launch_template_image_id      = data.aws_ami.ubuntu.id
-  launch_template_instance_type = var.instance_type
-  user_data                     = filebase64("ubuntu_bootstrap_webserver.sh")
-
-  # Tag specifications
-  resource_type = "instance"
-
-  #tags 
-  tag_name = "main-ubuntu"
-
-  # Autoscaling group using the main-launch-temp template
-  asg_name                      = "main-autoscaling-group"
-  asg_max_size                  = 5
-  asg_min_size                  = 2
-  asg_health_check_grace_period = 400
-  asg_health_check_type         = "EC2"
-  asg_desired_capacity          = 4
-  asg_force_delete              = true
-  asg_vpc_zone_identifier       = [for subnet in data.terraform_remote_state.level1-main-vpc.outputs.main-private-subnet : subnet.id]
-  asg_target_group_arns         = [module.main-elb.main-target-group.arn]
-
-  #launch_template
-  launch_template_version = "$Latest"
-
-  #tags
-  tag_key             = "name"
-  tag_value           = "main"
-  propagate_at_launch = true
+  # IAM role & instand profile
+  create_iam_instance_profile = true
+  iam_role_name               = "main-ssm-full-access"
+  iam_role_path               = "/ec2/"
+  iam_role_description        = "IAM role for Sessions Manager"
+  iam_role_tags = {
+    CustomIamRole = "No"
+  }
+  iam_role_policies = {
+    AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  }
 }

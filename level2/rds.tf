@@ -1,49 +1,103 @@
-# RDS resource
-module "main-rds" {
-  source = "../modules/rds"
+#Declaring availability zone data source
+data "aws_availability_zones" "available" {
+  state = "available"
+}
 
-  #subnet group for private subnets
-  subnet_group_name       = "main-subnet-group"
-  subnet_group_subnet_ids = [for pvt-subnet in data.terraform_remote_state.level1-main-vpc.outputs.main-private-subnet : pvt-subnet.id]
-  tag_db_subnet_group     = "main-db"
+#Datasource for RDS password secret
+data "aws_secretsmanager_secret" "rds-secret" {
+  name = "main-rds-password"
+}
 
-  # parameter group to definemysql config settings
-  db_parameter_group_name   = "main-mysql8"
-  db_parameter_group_family = "mysql8.0"
+#Data source to retreive values from secret manager
+data "aws_secretsmanager_secret_version" "rds-secret-password" {
+  secret_id = data.aws_secretsmanager_secret.rds-secret.id
+}
 
-  # Security group to Allow port 3306 TCP inbound to RDS
-  sg_name        = "main-rds-security-group"
-  sg_description = "Allow port 3306 TCP inbound"
-  sg_vpc_id      = data.terraform_remote_state.level1-main-vpc.outputs.main-vpc-id
+# Using locals to assign the name main-rds-password to the decoded json expression
+locals {
+  main-rds-password = jsondecode(
+    data.aws_secretsmanager_secret_version.rds-secret-password.secret_string
+  )["password"]
+}
 
-  #ingress
-  sg_ingress_description     = "3306 sql port inbound"
-  sg_ingress_from_port       = 3306
-  sg_ingress_to_port         = 3306
-  sg_ingress_protocol        = "tcp"
-  sg_ingress_security_groups = ["${module.main-autoscaling-group.ec2-security-group-id}"]
+# Security group for to allow inboun traffic om port 3306
+module "rds-security-group" {
+  source = "terraform-aws-modules/security-group/aws"
 
-  #egress
-  sg_egress_from_port   = 0
-  sg_egress_to_port     = 65535
-  sg_egress_protocol    = "tcp"
-  sg_egress_cidr_blocks = ["0.0.0.0/0"]
+  name        = "rds-security-group"
+  description = "Allow port 3306 TCP inbound to RDS within VPC."
+  vpc_id      = data.terraform_remote_state.level1-main-vpc.outputs.main-vpc-id
 
-  #tags
-  sg_tag_name = "main-rds"
+  ingress_with_cidr_blocks = [
+    { # port 3306 SQL port ingress rule
+      from_port   = 3306
+      to_port     = 3306
+      protocol    = "tcp"
+      description = "inbound to sql"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
 
-  # RDS instance
-  db_identifier           = "main-mysql-database"
-  allocated_storage       = 20
-  storage_type            = "gp2"
-  engine                  = "mysql"
-  engine_version          = "8.0"
-  instance_class          = "db.t3.micro"
-  db_port                 = "3306"
-  rds_name                = "mydb"
-  rds_username            = "admin"
-  skip_final_snapshot     = true
-  multi_az                = true
+  egress_with_cidr_blocks = [
+    {
+      from_port   = 0
+      to_port     = 65535
+      protocol    = "tcp"
+      description = "rds-sg-out"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
+
+  tags = {
+    name = "main-rds-sg"
+  }
+}
+
+module "mysql-rds" {
+  source = "terraform-aws-modules/rds/aws"
+
+  identifier             = "mysql-database-main"
+  allocated_storage      = 20
+  storage_type           = "gp2"
+  engine                 = "mysql"
+  engine_version         = "5.7"
+  instance_class         = "db.t3.micro"
+  port                   = "3306"
+  db_name                = "mydb"
+  username               = "shaun"
+  password               = local.main-rds-password
+  create_random_password = false
+
+  skip_final_snapshot = true
+  multi_az            = false
+
+  vpc_security_group_ids = [module.rds-security-group.security_group_id]
+
   backup_retention_period = 1
   backup_window           = "09:46-10:16"
+
+  tags = {
+    Name = "main-mysql-rds"
+  }
+
+  # DB subnet group
+  create_db_subnet_group = true
+  subnet_ids             = [for subnet in data.terraform_remote_state.level1-main-vpc.outputs.main-private-subnet : subnet]
+
+  # DB parameter group
+  family = "mysql5.7"
+
+  # DB option group
+  major_engine_version = "5.7"
+
+  parameters = [
+    {
+      name  = "character_set_client"
+      value = "utf8mb4"
+    },
+    {
+      name  = "character_set_server"
+      value = "utf8mb4"
+    }
+  ]
 }
